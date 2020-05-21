@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div id="dashboardGrid">
+            <table id="dashboardTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td>eFiles Created</td>
+                        <td>eFiles (Active)	</td>
+                        <td>eFiles (Closed)</td>
+                        <td>pFiles Created</td>
+                        <td>pFiles (Active)</td>
+                        <td>pFiles (Closed)</td>
+                        <td>eReceipt Created</td>
+                        <td>pReceipt Created</td>
+                    </tr>
+                </thead>
+                <tbody id="dashboardBody">
+                </tbody>
+            </table>
+        </div>
+        
+    </div>
+</div>
+<script src="~/Scripts/jquery-3.4.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+<script src="~/Js/Dashboard.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        dashboard.getDashboardData();
+        $(document).on('click', '.expand', function () {
+            dashboard.getInstanceData($(this).data('id'));
+        });
+    });
+</script>
