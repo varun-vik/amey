@@ -21,5 +21,12 @@ namespace Dashboard.Controllers
             var data = service.GetDahsboardData(type);
             return Json(data, JsonRequestBehavior.AllowGet);
         }
+
+        public ActionResult GetInstanceData([FromUri]string type = "Department", [FromUri]string subdomain = "")
+        {
+            DashboardService service = new DashboardService();
+            var data = service.GetInstanceData(type, subdomain);
+            return Json(data, JsonRequestBehavior.AllowGet);
+        }
     }
 }

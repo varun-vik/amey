@@ -7,7 +7,7 @@
         <div id="dashboardGrid">
             <table id="dashboardTable" class="table table-striped">
                 <thead>
-                    <tr>
+                    <tr style="font-weight:700;font-size:large">
                         <td></td>
                         <td></td>
                         <td>eFiles Created</td>
@@ -34,7 +34,7 @@
     $(document).ready(function () {
         dashboard.getDashboardData();
         $(document).on('click', '.expand', function () {
-            dashboard.getInstanceData($(this).data('id'));
+            dashboard.getInstanceData($(this).data('id'), $(this).data('subdomain'), $(this));
         });
     });
 </script>
