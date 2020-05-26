@@ -19,7 +19,7 @@ namespace Dashboard.Controllers
         {
             DashboardService service = new DashboardService();
             var data = service.GetDahsboardData(type);
-            return Json(data, JsonRequestBehavior.AllowGet);
+            return Json( new { data = data } , JsonRequestBehavior.AllowGet);
         }
 
         public ActionResult GetInstanceData([FromUri]string type = "Department", [FromUri]string subdomain = "")
