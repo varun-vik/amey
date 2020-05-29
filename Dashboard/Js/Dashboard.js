@@ -13,7 +13,7 @@
                     'data': null,
                     'defaultContent': ''
                 },
-                { 'data': 'DepartmentName' },
+                { 'data': 'InstanceName' },
                 { 'data': 'ElectronicFileCreated' },
                 { 'data': 'ElectronicFilePending' },
                 { 'data': 'ElectronicFileClosed' },

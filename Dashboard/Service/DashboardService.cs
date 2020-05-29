@@ -16,57 +16,55 @@ namespace Dashboard.Service
     {
         public List<DashboardModel> GetDahsboardData(string filter)
         {
-            List<string> instances = new List<string>
-            {
-                "sr", "au", "scr","wr","nwr","wcr","swr","ser","cr","ner","nfr","er","secr","ecor","nr","mrk","ecr","ncr"
-            };
+            //List<string> instances = AppConfiguration.InstanceData.Data.Select(x => x.EOfficeInstancesUrl).ToList();
 
             List<DashboardModel> data = new List<DashboardModel>();
-            Parallel.ForEach(instances, (instance) =>
+            Parallel.ForEach(AppConfiguration.InstanceData.Data, (instance) =>
             {
-                data.AddRange(TransformModel(instance, filter));
+                data.AddRange(TransformModel(instance.EOfficeInstancesUrl, filter, instance.InstanceName));
             });
             return data;
         }
 
         public List<DashboardModel> GetInstanceData(string filter, string subdomain)
         {
-            var data = TransformModel(subdomain, filter);
+            var data = TransformModel(subdomain, filter, string.Empty);
             return data;
         }
 
-        public List<DashboardModel> TransformModel(string subdomain, string filter)
+        public List<DashboardModel> TransformModel(string instanceUrl, string filter, string instanceName)
         {
             var result = new List<DashboardModel>();
 
             if (filter == "Instance")
             {
-                var FILECREATEDINSTANCEWISE = GetApiData(subdomain, AppConfiguration.FILECREATEDINSTANCEWISE);
-                var FILEPENDINGINSTANCEWISE = GetApiData(subdomain, AppConfiguration.FILEPENDINGINSTANCEWISE);
-                var FILECLOSEDINSTANCEWISE = GetApiData(subdomain, AppConfiguration.FILECLOSEDINSTANCEWISE);
-                var RECEIPTCREATEDINSTANCEWISE = GetApiData(subdomain, AppConfiguration.RECEIPTCREATEDINSTANCEWISE);
+                var FILECREATEDINSTANCEWISE = GetApiData(instanceUrl, AppConfiguration.FILECREATEDINSTANCEWISE);
+                var FILEPENDINGINSTANCEWISE = GetApiData(instanceUrl, AppConfiguration.FILEPENDINGINSTANCEWISE);
+                var FILECLOSEDINSTANCEWISE = GetApiData(instanceUrl, AppConfiguration.FILECLOSEDINSTANCEWISE);
+                var RECEIPTCREATEDINSTANCEWISE = GetApiData(instanceUrl, AppConfiguration.RECEIPTCREATEDINSTANCEWISE);
                 result = GetAggregateData(FILECREATEDINSTANCEWISE, FILEPENDINGINSTANCEWISE, FILECLOSEDINSTANCEWISE, RECEIPTCREATEDINSTANCEWISE);
             }
             else if (filter == "Department")
             {
-                var FILECREATEDDEPARTMENTWISE = GetApiData(subdomain, AppConfiguration.FILECREATEDDEPARTMENTWISE);
-                var FILEPENDINGDEPARTMENTWISE = GetApiData(subdomain, AppConfiguration.FILEPENDINGDEPARTMENTWISE);
-                var FILESCLOSEDDEPARTMENTWISE = GetApiData(subdomain, AppConfiguration.FILESCLOSEDDEPARTMENTWISE);
-                var RECEIPTCREATEDDEPARTMENTWISE = GetApiData(subdomain, AppConfiguration.RECEIPTCREATEDDEPARTMENTWISE);
+                var FILECREATEDDEPARTMENTWISE = GetApiData(instanceUrl, AppConfiguration.FILECREATEDDEPARTMENTWISE);
+                var FILEPENDINGDEPARTMENTWISE = GetApiData(instanceUrl, AppConfiguration.FILEPENDINGDEPARTMENTWISE);
+                var FILESCLOSEDDEPARTMENTWISE = GetApiData(instanceUrl, AppConfiguration.FILESCLOSEDDEPARTMENTWISE);
+                var RECEIPTCREATEDDEPARTMENTWISE = GetApiData(instanceUrl, AppConfiguration.RECEIPTCREATEDDEPARTMENTWISE);
                 result = GetAggregateData(FILECREATEDDEPARTMENTWISE, FILEPENDINGDEPARTMENTWISE, FILESCLOSEDDEPARTMENTWISE, RECEIPTCREATEDDEPARTMENTWISE);
             }
             else if (filter == "Section")
             {
-                var FILECREATEDSECTIONWISE = GetApiData(subdomain, AppConfiguration.FILECREATEDSECTIONWISE);
-                var FILEPENDINGSECTIONWISE = GetApiData(subdomain, AppConfiguration.FILEPENDINGSECTIONWISE);
-                var FILECLOSEDSECTIONWISE = GetApiData(subdomain, AppConfiguration.FILECLOSEDSECTIONWISE);
-                var RECEIPTCREATEDSECTIONWISE = GetApiData(subdomain, AppConfiguration.RECEIPTCREATEDSECTIONWISE);
+                var FILECREATEDSECTIONWISE = GetApiData(instanceUrl, AppConfiguration.FILECREATEDSECTIONWISE);
+                var FILEPENDINGSECTIONWISE = GetApiData(instanceUrl, AppConfiguration.FILEPENDINGSECTIONWISE);
+                var FILECLOSEDSECTIONWISE = GetApiData(instanceUrl, AppConfiguration.FILECLOSEDSECTIONWISE);
+                var RECEIPTCREATEDSECTIONWISE = GetApiData(instanceUrl, AppConfiguration.RECEIPTCREATEDSECTIONWISE);
                 result = GetAggregateData(FILECREATEDSECTIONWISE, FILEPENDINGSECTIONWISE, FILECLOSEDSECTIONWISE, RECEIPTCREATEDSECTIONWISE);
             }
 
             result.ForEach((x) => 
             {
-                x.SubDomain = subdomain;
+                x.SubDomain = instanceUrl;
+                x.InstanceName = instanceName;
             });
             return result;
         }
@@ -104,11 +102,11 @@ namespace Dashboard.Service
             return result;
         }
 
-        public List<DashboardModel> GetApiData(string subdomain, string api)
+        public List<DashboardModel> GetApiData(string instanceUrl, string api)
         {
             try
             {
-                RestClient client = new RestClient($"https://{subdomain}.eoffice.railnet.gov.in/eFileServices/rest/xmldataset/efile/");
+                RestClient client = new RestClient($"https://{instanceUrl}/eFileServices/rest/xmldataset/efile/");
                 RestRequest request = new RestRequest(api, Method.POST);
 
                 var response = client.Execute(request);
